@@ -1,117 +1,77 @@
-# traffic-simulation
-Python Stau-Simulation
-stau-simulation/
-│
-├── README.md
-├── requirements.txt
-│
-├── src/
-│   ├── sim.py
-│   └── utils.py
-│
-├── notebooks/
-│   └── exploration.ipynb
-│
-├── results/
-│   └── runs.csv
-│
-└── presentation/
-    └── slides.pdf
+# Traffic Simulation with Monte Carlo
 
+## Projektbeschreibung
 
-# Stau-Simulation (Python)
+In diesem Projekt wird eine vereinfachte eindimensionale Verkehrssimulation in Python
+implementiert. Jede Simulation repräsentiert ein mögliches Verkehrsszenario mit zufälligen
+Anfangsbedingungen, insbesondere zufällig initialisierten Fahrzeuggeschwindigkeiten.
 
-Dieses Projekt simuliert den Verkehrsfluss auf einer einspurigen Straße
-mithilfe eines einfachen zellulären Automaten.
+Mithilfe eines Monte-Carlo-Ansatzes wird die Simulation viele Male wiederholt, um den
+Erwartungswert der durchschnittlichen Fahrzeuggeschwindigkeit zu schätzen und die
+statistische Unsicherheit dieser Schätzung anhand von Standardfehlern und
+Konfidenzintervallen zu quantifizieren.
 
-## Features
-- Einspurige Straße (Ring)
-- Zufällige Startpositionen & Geschwindigkeiten
-- Brems- und Beschleunigungsregeln
-- Stauwellen sichtbar im Zeitpositionsdiagramm
-- Reproduzierbarkeit (fixed random seed)
+Der Fokus des Projekts liegt auf Monte-Carlo-Methoden und Unsicherheitsanalyse im Rahmen
+des Moduls „Simulationstools“. Eine realistische Modellierung von Fahrzeuginteraktionen
+oder expliziter Stauentstehung ist bewusst nicht Teil des Modells.
 
+---
+
+## Repository-Inhalt
+
+- `traffic-simulation.ipynb`  
+  Jupyter Notebook mit der Implementierung der Verkehrssimulation, dem Monte-Carlo-
+  Experiment sowie der Sensitivitätsanalyse.
+
+- `README.md`  
+  Projektbeschreibung und Überblick.
+
+- `requirements.txt`  
+  Liste der benötigten Python-Bibliotheken.
+
+---
+
+## Voraussetzungen
+
+- Python 3.x
+- numpy
+- matplotlib
+ 
+---
 ## Installation
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-python src/sim.py
-jupyter notebook
----
 
-# 🧩 **requirements.txt**
----
+—-
 
-# 🧠 **src/sim.py (fertig & funktionierend)**
+## Ausführung
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from tqdm import tqdm
-from utils import initialize_cars, step
+Das Projekt wird vollständig über das Jupyter Notebook ausgeführt.
 
-N_CARS = 30
-ROAD_LENGTH = 200
-STEPS = 200
-SEED = 42
+1.	Notebook traffic-simulation.ipynb öffnen
+2.	Alle Zellen der Reihe nach ausführen
 
-np.random.seed(SEED)
+Dabei werden:
+	•	Monte-Carlo-Simulationen durchgeführt
+	•	Erwartungswert und Standardfehler berechnet
+	•	Konfidenzintervalle bestimmt
+	•	Grafiken zur Ergebnisverteilung und Sensitivitätsanalyse erzeugt
 
-def run_sim():
-    positions, velocities = initialize_cars(N_CARS, ROAD_LENGTH)
-    trajectory = []
+—-
 
-    for _ in tqdm(range(STEPS)):
-        trajectory.append(positions.copy())
-        positions, velocities = step(positions, velocities, ROAD_LENGTH)
+##Modulkontext
 
-    return np.array(trajectory)
+Dieses Projekt wurde im Rahmen des Moduls Simulationstools erstellt und demonstriert
+die Anwendung von Monte-Carlo-Methoden zur Schätzung von Erwartungswerten sowie zur
+Quantifizierung von Unsicherheiten in stochastischen Modellen.
 
-if __name__ == "__main__":
-    trajectory = run_sim()
+##Ergebnisse & Visualisierung
 
-    plt.figure(figsize=(10,5))
-    plt.imshow(trajectory, aspect="auto", cmap="binary")
-    plt.title("Stau-Simulation (Zeit vs Position)")
-    plt.xlabel("Position")
-    plt.ylabel("Zeit")
-    plt.savefig("results/plot.png")
-    plt.show()
+Das Notebook erzeugt unter anderem:
+	•	Ein Histogramm der durchschnittlichen Fahrzeuggeschwindigkeiten aus dem
+Monte-Carlo-Experiment inklusive Mittelwert und Konfidenzintervall
+	•	Eine Sensitivitätsanalyse der mittleren Geschwindigkeit in Abhängigkeit von der Anzahl
+der Fahrzeuge
 
-    pd.DataFrame(trajectory).to_csv("results/runs.csv", index=False)
-import numpy as np
-
-V_MAX = 5
-SLOWDOWN_PROB = 0.2
-
-def initialize_cars(n_cars, road_length):
-    positions = np.sort(np.random.choice(range(road_length), n_cars, replace=False))
-    velocities = np.random.randint(0, V_MAX+1, n_cars)
-    return positions, velocities
-
-def step(positions, velocities, road_length):
-    n = len(positions)
-    new_velocities = velocities.copy()
-
-    for i in range(n):
-        if i < n-1:
-            gap = positions[i+1] - positions[i] - 1
-        else:
-            gap = (road_length - positions[i]) + positions[0] - 1
-
-        if new_velocities[i] < V_MAX:
-            new_velocities[i] += 1
-
-        if new_velocities[i] > gap:
-            new_velocities[i] = gap
-
-        if np.random.rand() < SLOWDOWN_PROB and new_velocities[i] > 0:
-            new_velocities[i] -= 1
-
-    new_positions = (positions + new_velocities) % road_length
-    order = np.argsort(new_positions)
-    
-    return new_positions[order], new_velocities[order]
+Diese Grafiken werden im Report verwendet.
