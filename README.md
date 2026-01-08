@@ -1,7 +1,7 @@
 # Traffic Simulation with Monte Carlo
 
 ## Projektbeschreibung
-.
+
 In diesem Projekt wird eine vereinfachte eindimensionale Verkehrssimulation in Python
 implementiert. Jede Simulation repräsentiert ein mögliches Verkehrsszenario mit zufälligen
 Anfangsbedingungen, insbesondere zufällig initialisierten Fahrzeuggeschwindigkeiten.
