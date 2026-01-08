@@ -44,7 +44,7 @@ oder expliziter Stauentstehung ist bewusst nicht Teil des Modells.
 pip install -r requirements.txt
 
 —-
-
+```
 ## Ausführung
 
 Das Projekt wird vollständig über das Jupyter Notebook ausgeführt.
